@@ -84,12 +84,12 @@
 // type: "other" renders an image and a link to any page (PDF, itch.io, YouTube, Figma, etc.)
 // thumb: optional image shown before an iframe loads (helps performance). If omitted for p5, the iframe loads directly.
 // tags: optional list of labels.
-// ==============================================================================
+
 const PROJECTS = [
   {
     title: "UFO",
     type: "p5",
-    link: "https://editor.p5js.org/emelybenj/full/DbgQRNMFJ", // replace with your embed OR local path
+    link: "https://editor.p5js.org/emelybenj/full/DbgQRNMFJ",
     thumb: "https://picsum.photos/800/500?random=1",
     desc: "Can you escape the UFO?",
     tags: ["p5.js"]
@@ -97,7 +97,7 @@ const PROJECTS = [
   {
     title: "Window",
     type: "p5",
-    link: "https://editor.p5js.org/emelybenj/full/L_tMgZztH", // works when you export a sketch into /sketches/rps/
+    link: "https://editor.p5js.org/emelybenj/full/L_tMgZztH",
     desc: "Just a weird little window.",
     tags: ["p5.js", "game"]
   },
@@ -116,6 +116,7 @@ const PROJECTS = [
     img: "https://picsum.photos/800/500?random=4",
     desc: "Christmas inspired visual novel.",
     tags: ["writeup", "procedural"]
+  }
 ];
 
 // ===== RENDER ================================================================
@@ -139,7 +140,6 @@ function card(project){
 
   if(isP5){
     if(project.thumb){
-      // Lazy trap: click to load iframe, improves performance
       const img = document.createElement('img');
       img.src = project.thumb; img.alt = project.title;
       thumb.appendChild(img);
@@ -150,13 +150,13 @@ function card(project){
         thumb.appendChild(badge);
         const ifr = document.createElement('iframe');
         ifr.loading = 'lazy';
-        ifr.src = project.embed;
+        ifr.src = project.link;   // FIXED
         thumb.appendChild(ifr);
       }, { once:true });
     } else {
       const ifr = document.createElement('iframe');
       ifr.loading = 'lazy';
-      ifr.src = project.embed;
+      ifr.src = project.link; // FIXED
       thumb.appendChild(ifr);
     }
   } else {
@@ -178,8 +178,10 @@ function card(project){
 
   el.appendChild(thumb); el.appendChild(body);
 
-  if(isP5 && project.embed){ el.addEventListener('click', ()=> window.open(project.embed,'_blank')); el.style.cursor='pointer'; }
+  // FIXED
+  if(isP5 && project.link){ el.addEventListener('click', ()=> window.open(project.link,'_blank')); el.style.cursor='pointer'; }
   if(!isP5 && project.link){ el.addEventListener('click', ()=> window.open(project.link,'_blank')); el.style.cursor='pointer'; }
+
   return el;
 }
 
@@ -191,7 +193,6 @@ function render(){
 
 render();
 
-// Tabs
 for(const t of tabs){
   t.addEventListener('click', ()=>{
     tabs.forEach(x=> x.classList.remove('active'));
@@ -200,6 +201,3 @@ for(const t of tabs){
     render();
   });
 }
-</script>
-</body>
-</html>
