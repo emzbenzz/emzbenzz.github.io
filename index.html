@@ -46,6 +46,7 @@
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
@@ -59,38 +60,34 @@
       <nav class="links" aria-label="social links">
         <a href="https://github.com/emzbenzz">GitHub</a>
         <a href="https://www.linkedin.com/in/emelybenjamin/">LinkedIn</a>
-      
       </nav>
     </header>
 
     <section class="hero">
       <h2>Hi there! I make fun, interactive things.</h2>
-      <p>Below are my p5.js experiments and a few non-code projects. Everything here runs on GitHub Pages and is easy to update.</p>
+      <p>Below are my p5.js experiments and other projects.</p>
     </section>
 
     <div class="tabs" role="tablist">
-      <button class="tab active" data-filter="all" role="tab" aria-selected="true">All</button>
-      <button class="tab" data-filter="p5" role="tab">p5.js</button>
-      <button class="tab" data-filter="other" role="tab">Other</button>
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="p5">p5.js</button>
+      <button class="tab" data-filter="other">Other</button>
     </div>
 
     <section class="grid" id="grid" aria-live="polite"></section>
-    <footer>© <span id="y"></span>Emely • Built with plain HTML/CSS/JS • Hosted on GitHub Pages</footer>
+
+    <footer>© <span id="y"></span> Emely • Built with HTML/CSS/JS • Hosted on GitHub Pages</footer>
   </div>
 
 <script>
-// ==== HOW TO ADD PROJECTS =====================================================
-// Each entry below becomes a card automatically.
-// type: "p5" renders an iframe (use the p5 Web Editor "Share → Embed" URL, or an exported sketch folder path like "sketches/my-sim/index.html");
-// type: "other" renders an image and a link to any page (PDF, itch.io, YouTube, Figma, etc.)
-// thumb: optional image shown before an iframe loads (helps performance). If omitted for p5, the iframe loads directly.
-// tags: optional list of labels.
-// ==============================================================================
+// ===================================================
+// PROJECT CARDS
+// ===================================================
 const PROJECTS = [
   {
     title: "UFO",
     type: "p5",
-    embed: "https://editor.p5js.org/emelybenj/full/DbgQRNMFJ", // replace with your embed OR local path
+    embed: "https://editor.p5js.org/emelybenj/full/DbgQRNMFJ",
     thumb: "https://picsum.photos/800/500?random=1",
     desc: "Can you escape the UFO?",
     tags: ["p5.js"]
@@ -98,7 +95,7 @@ const PROJECTS = [
   {
     title: "Window",
     type: "p5",
-    embed: "https://editor.p5js.org/emelybenj/full/L_tMgZztH", // works when you export a sketch into /sketches/rps/
+    embed: "https://editor.p5js.org/emelybenj/full/L_tMgZztH",
     desc: "Just a weird little window.",
     tags: ["p5.js", "game"]
   },
@@ -108,21 +105,24 @@ const PROJECTS = [
     embed: "https://editor.p5js.org/emelybenj/full/EgIcEHo5M",
     desc: "Everything to me.",
     tags: ["p5.js", "animation"]
-  },
+  },  // ← FIXED COMMA
   {
     title: "Sweet Dreams: The Christmas Chronicles",
-    type: "Other",
-    embed: "https://emelybenj.itch.io/sweet-dreams-the-christmas-chronicles",
-    desc: "Christmas themes visual novel.",
+    type: "other",
+    link: "https://emelybenj.itch.io/sweet-dreams-the-christmas-chronicles",
+    img: "https://picsum.photos/800/500?random=2",
+    desc: "Christmas-themed visual novel.",
     tags: ["twine"]
   }
 ];
 
-// ===== RENDER ================================================================
+// ===================================================
+// RENDERING LOGIC
+// ===================================================
 const grid = document.getElementById('grid');
 const tabs = document.querySelectorAll('.tab');
-const year = document.getElementById('y');
-year.textContent = new Date().getFullYear();
+
+document.getElementById('y').textContent = new Date().getFullYear();
 let currentFilter = 'all';
 
 function card(project){
@@ -132,74 +132,104 @@ function card(project){
 
   const thumb = document.createElement('div');
   thumb.className = 'thumb';
+
   const badge = document.createElement('span');
   badge.className = 'badge';
-  badge.textContent = isP5 ? 'p5.js' : 'Project';
+  badge.textContent = isP5 ? "p5.js" : "Project";
   thumb.appendChild(badge);
 
   if(isP5){
     if(project.thumb){
-      // Lazy trap: click to load iframe, improves performance
       const img = document.createElement('img');
-      img.src = project.thumb; img.alt = project.title;
+      img.src = project.thumb;
+      img.alt = project.title;
       thumb.appendChild(img);
-      thumb.style.cursor = 'pointer';
-      thumb.title = 'Click to load';
-      thumb.addEventListener('click', ()=>{
-        thumb.innerHTML = '';
+
+      thumb.style.cursor = "pointer";
+      thumb.title = "Click to load";
+
+      thumb.addEventListener("click", () => {
+        thumb.innerHTML = "";
         thumb.appendChild(badge);
-        const ifr = document.createElement('iframe');
-        ifr.loading = 'lazy';
-        ifr.src = project.embed;
-        thumb.appendChild(ifr);
-      }, { once:true });
+        const iframe = document.createElement("iframe");
+        iframe.src = project.embed;
+        iframe.loading = "lazy";
+        thumb.appendChild(iframe);
+      }, { once: true });
+
     } else {
-      const ifr = document.createElement('iframe');
-      ifr.loading = 'lazy';
-      ifr.src = project.embed;
-      thumb.appendChild(ifr);
+      const iframe = document.createElement("iframe");
+      iframe.src = project.embed;
+      iframe.loading = "lazy";
+      thumb.appendChild(iframe);
     }
   } else {
-    const img = document.createElement('img');
-    img.src = project.img; img.alt = project.title;
+    const img = document.createElement("img");
+    img.src = project.img;
+    img.alt = project.title;
     thumb.appendChild(img);
+
+    el.addEventListener("click", () => {
+      window.open(project.link, "_blank");
+    });
+    el.style.cursor = "pointer";
   }
 
-  const body = document.createElement('div');
-  body.className = 'body';
-  const h3 = document.createElement('h3'); h3.textContent = project.title; body.appendChild(h3);
-  const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = project.desc || ''; body.appendChild(meta);
+  const body = document.createElement("div");
+  body.className = "body";
 
-  if(project.tags?.length){
-    const tags = document.createElement('div'); tags.className = 'tags';
-    project.tags.forEach(t=>{ const span=document.createElement('span'); span.className='tag'; span.textContent=t; tags.appendChild(span); });
+  const h3 = document.createElement("h3");
+  h3.textContent = project.title;
+  body.appendChild(h3);
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.textContent = project.desc;
+  body.appendChild(meta);
+
+  if(project.tags){
+    const tags = document.createElement("div");
+    tags.className = "tags";
+    project.tags.forEach(t => {
+      const span = document.createElement("span");
+      span.className = "tag";
+      span.textContent = t;
+      tags.appendChild(span);
+    });
     body.appendChild(tags);
   }
 
-  el.appendChild(thumb); el.appendChild(body);
+  el.appendChild(thumb);
+  el.appendChild(body);
 
-  if(isP5 && project.embed){ el.addEventListener('click', ()=> window.open(project.embed,'_blank')); el.style.cursor='pointer'; }
-  if(!isP5 && project.link){ el.addEventListener('click', ()=> window.open(project.link,'_blank')); el.style.cursor='pointer'; }
+  if(isP5){
+    el.addEventListener("click", () => {
+      window.open(project.embed, "_blank");
+    });
+    el.style.cursor = "pointer";
+  }
+
   return el;
 }
 
 function render(){
-  grid.innerHTML = '';
-  PROJECTS.filter(p=> currentFilter==='all' || p.type===currentFilter)
-          .forEach(p=> grid.appendChild(card(p)));
+  grid.innerHTML = "";
+  PROJECTS
+    .filter(p => currentFilter === "all" || p.type === currentFilter)
+    .forEach(p => grid.appendChild(card(p)));
 }
 
 render();
 
-// Tabs
-for(const t of tabs){
-  t.addEventListener('click', ()=>{
-    tabs.forEach(x=> x.classList.remove('active'));
-    t.classList.add('active');
-    currentFilter = t.dataset.filter;
+tabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    tabs.forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    currentFilter = tab.dataset.filter;
     render();
   });
-}
+});
 </script>
+
 </body>
 </html>
