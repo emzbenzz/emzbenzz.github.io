@@ -38,7 +38,6 @@
     .tag{font-size:12px;color:var(--muted);padding:4px 8px;border:1px solid rgba(255,255,255,.08);border-radius:999px}
     .meta{margin-top:10px;color:var(--muted);font-size:14px}
     footer{margin:36px 0 14px;color:var(--muted);text-align:center}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
   </style>
 </head>
 
@@ -57,8 +56,8 @@
     </header>
 
     <section class="hero">
-      <h2>Hi there! My name is Emely and I make fun, interactive projects. I enjoy using different interactive platforms like Twine, Bitsy, and p5.js. Currently, I am in the Digital Media MA program at UCF.</h2>
-      <p>Below are my p5.js experiments and other projects that I have created. Check them out!</p>
+      <h2>Hi there! My name is Emely and I make fun, interactive projects.</h2>
+      <p>I love working with p5.js, Bitsy, and Twine. Currently I study Digital Media at UCF.</p>
     </section>
 
     <div class="tabs" role="tablist">
@@ -73,58 +72,49 @@
   </div>
 
 <script>
-// ===================================================
-// PROJECT CARDS
-// ===================================================
 const PROJECTS = [
   {
     title: "UFO",
     type: "p5",
     embed: "https://editor.p5js.org/emelybenj/full/DbgQRNMFJ",
-    
+    thumb: "ufo.jpg",
     desc: "Can you escape the UFO?",
     tags: ["p5.js"]
-    thumbnail: "ufo.jpg"
   },
   {
     title: "Window",
     type: "p5",
     embed: "https://editor.p5js.org/emelybenj/full/L_tMgZztH",
+    thumb: "window.jpg",
     desc: "Just a weird little window.",
     tags: ["p5.js", "game"]
-    thumbnail: "window.jpg"
   },
   {
     title: "Bagel",
     type: "p5",
     embed: "https://editor.p5js.org/emelybenj/full/EgIcEHo5M",
+    thumb: "bagel.jpg",
     desc: "Everything to me.",
     tags: ["p5.js", "animation"]
-    thumbnail: "bagel.jpg"
   },
   {
     title: "Sweet Dreams: The Christmas Chronicles",
     type: "other",
     link: "https://emelybenj.itch.io/sweet-dreams-the-christmas-chronicles",
-    img: "https://picsum.photos/800/500?random=2",
+    thumb: "visual.jpg",
     desc: "Christmas-themed visual novel.",
     tags: ["twine", "other"]
-    thumbnail: "visual.jpg"
   },
   {
     title: "Billy's Bakery Run",
     type: "other",
     link: "https://emelybenj.itch.io/billys-biscuit-run",
-    img: "https://picsum.photos/800/500?random=2",
+    thumb: "billy.jpg",
     desc: "A silly little Bitsy game.",
     tags: ["bitsy", "other"]
-    thumbnail: "billy.jpg"
   }
 ];
 
-// ===================================================
-// RENDERING LOGIC
-// ===================================================
 const grid = document.getElementById('grid');
 const tabs = document.querySelectorAll('.tab');
 document.getElementById('y').textContent = new Date().getFullYear();
@@ -137,45 +127,30 @@ function card(project){
 
   const thumb = document.createElement('div');
   thumb.className = 'thumb';
+
   const badge = document.createElement('span');
   badge.className = 'badge';
   badge.textContent = isP5 ? "p5.js" : "Project";
   thumb.appendChild(badge);
 
+  // Use your local repo images ✔
+  const img = document.createElement('img');
+  img.src = project.thumb;
+  img.alt = project.title;
+  thumb.appendChild(img);
+
+  thumb.style.cursor = "pointer";
+  thumb.title = "Click to load / view";
+
+  // For p5 — click loads iframe
   if(isP5){
-    if(project.thumb){
-      const img = document.createElement('img');
-      img.src = project.thumb;
-      img.alt = project.title;
-      thumb.appendChild(img);
-
-      thumb.style.cursor = "pointer";
-      thumb.title = "Click to load";
-
-      thumb.addEventListener("click", () => {
-        thumb.innerHTML = "";
-        thumb.appendChild(badge);
-        const iframe = document.createElement("iframe");
-        iframe.src = project.embed;
-        iframe.loading = "lazy";
-        thumb.appendChild(iframe);
-      }, { once: true });
-    } else {
-      const iframe = document.createElement("iframe");
-      iframe.src = project.embed;
-      iframe.loading = "lazy";
-      thumb.appendChild(iframe);
-    }
+    thumb.addEventListener("click", () => {
+      window.open(project.embed, "_blank");
+    });
   } else {
-    const img = document.createElement("img");
-    img.src = project.img;
-    img.alt = project.title;
-    thumb.appendChild(img);
-
-    el.addEventListener("click", () => {
+    thumb.addEventListener("click", () => {
       window.open(project.link, "_blank");
     });
-    el.style.cursor = "pointer";
   }
 
   const body = document.createElement("div");
@@ -204,13 +179,6 @@ function card(project){
 
   el.appendChild(thumb);
   el.appendChild(body);
-
-  if(isP5){
-    el.addEventListener("click", () => {
-      window.open(project.embed, "_blank");
-    });
-    el.style.cursor = "pointer";
-  }
 
   return el;
 }
